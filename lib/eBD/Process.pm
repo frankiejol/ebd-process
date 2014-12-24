@@ -1,9 +1,16 @@
+package eBD::Process;
+
 use strict;
 use warnings;
-package eBD::Process;
+use vars qw( @ISA @EXPORT);
+
 
 use DBI;
 use XML::Simple;
+
+require Exporter;
+@ISA = qw(Exporter);
+@EXPORT = qw(open_log open_dbh print_log log_env);
 
 # ABSTRACT: Common eBD process functions
 
@@ -23,7 +30,7 @@ version 0.0.1
 
   use eBD::Process;
 
-  my $dbh = eBD::Process::open_dbh();
+  my $dbh = open_dbh();
 
 =cut
 
@@ -40,7 +47,7 @@ The dbh
 
 =head3 example
 
-  my $dbh = eBD::Process::open_dbh();
+  my $dbh = open_dbh();
 
 =cut
 
@@ -97,11 +104,12 @@ my $LOG;
 my $DBH;
 
 sub print_log {
+    open_log() if !$LOG;
     my $now = localtime(time);
     print $LOG "$now ".join(" ",@_)."\n";
 }
 
-sub _open_log {
+sub open_log {
     open $LOG,'>>',$FILE_LOG or die "$! $FILE_LOG";
     print_log("START");
 }
@@ -164,14 +172,20 @@ sub open_dbh {
     }
 }
 
-sub _log_env {
+sub log_env {
     for (sort keys %ENV) {
         print_log("$_ : $ENV{$_}");
     }
 }
+
 sub _close_log {
+    return if !$LOG;
     print_log("END");
     close $LOG;
+}
+
+END {
+    _close_log();
 }
 
 1;
