@@ -7,6 +7,85 @@ use XML::Simple;
 
 # ABSTRACT: Common eBD process functions
 
+our $VERSION = '0.0.1';
+
+=head1 NAME
+
+eBD::Process -  Common eBD process functions
+
+=head1 VERSION
+
+version 0.0.1
+
+=cut
+
+=head1 SYNOPSYS
+
+  use eBD::Process;
+
+  my $dbh = eBD::Process::open_dbh();
+
+=cut
+
+=head1 METHODS
+
+=head2 open_dbh
+
+Opens the DBH of the current eBD running. As it runs inside eBD, it finds the
+alias in the environment variable EBD_ALIAS.
+
+=head3 returns
+
+The dbh
+
+=head3 example
+
+  my $dbh = eBD::Process::open_dbh();
+
+=cut
+
+=head1 INSTALLATION
+
+=head2 Operating System Perl
+
+If you are able to run a shell in your system. Install the library doing
+
+  $ perl Makefile.PL
+  $ make test
+  $ sudo make install
+
+=head2 eBD perl
+
+If you want to run this process from eBD perl. You have to find out where
+it is, maybe something like ~ebdfas/system/bin/perl
+
+  # ~ebdas/system/bin/perl Makefile.PL
+  # make test
+  # make install
+ 
+Now the script must run with eBD perl. One not bad way is running it from
+a shell:
+
+   #!/bin/bash
+   CMD=$EBD_SYSTEM/bin/perl
+   FILENAME=`basename $0 .sh`
+   exec $CMD $FILENAME.pl $@
+
+This may raise a security problem because bogus arguments can be passed to
+this shell and run by the eBD user. Also most of the eBD perl libraries are
+quite old and should not be upgraded. If you need to use some library you
+should install it in the OS perl, not the eBD perl.
+
+
+=head2 No way to install it
+
+Upload the .pm file  and call it from your script like this:
+
+  use lib '.';
+  use eBD::Process;
+
+=cut
+
 my $FILE_LOG = $0;
 $FILE_LOG =~ s{.*/}{};
 $FILE_LOG = "/var/tmp/$FILE_LOG.log";
@@ -46,6 +125,7 @@ sub _connect_dbh {
     $host = 'localhost' if !$host or ref($host); # ref vol dir que és llista buida aquí
 
     my $user = $connection->{Username}  or die "Missing Username in "._dump($connection);
+
     my $pass = ($connection->{Password} or '');
     my $drv  = ( $connection->{Driver}  or 'mysql');
     $drv = lc($drv) if $DRIVER_LC{lc($drv)};
