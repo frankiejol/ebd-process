@@ -45,7 +45,7 @@ use_ok('eBD::Process');
 
 init_config();
 
-my $dbh = eBD::Process::open_dbh();
+my $dbh = open_dbh();
 ok($dbh);
 ok(ref $dbh);
 done_testing();
