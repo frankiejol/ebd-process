@@ -2,7 +2,6 @@ use strict;
 use warnings;
 package eBD::Process;
 
-use Data::Dumper;
 use DBI;
 use XML::Simple;
 
@@ -67,6 +66,7 @@ sub _connect_dbh {
     die "Missing db like $EBD_ALIAS\% at table Servidores at $db\n"
         if !$db2;
     $drv2 = lc($drv2) if $DRIVER_LC{lc($drv2)};
+    $port2 = $port if !$port2;
     $DBH = DBI->connect("dbi:$drv2:database=$db2;host=$host2;port=$port2", $user2, $pass2
             ,{RaiseError => 1, PrintError => 1});
     return $DBH;
@@ -76,7 +76,7 @@ sub open_dbh {
     my $file_config = $EBD_BASE."/app/conf/ebd.xml";
     die "Missing $file_config" if ! -e $file_config;
     my $config = XMLin($file_config);
-    print Dumper($config);
+#    print Dumper($config);
     for my $ebd (sort keys %$config) {
         my $alias = $config->{$ebd}->{Alias};
         next if !defined $alias || $alias ne $ENV{EBD_ALIAS};
