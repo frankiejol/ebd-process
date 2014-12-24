@@ -7,7 +7,7 @@ VERSION
 SYNOPSYS
       use eBD::Process;
 
-      my $dbh = eBD::Process::open_dbh();
+      my $dbh = open_dbh();
 
 METHODS
   open_dbh
@@ -18,7 +18,7 @@ METHODS
     The dbh
 
     example
-      my $dbh = eBD::Process::open_dbh();
+      my $dbh = open_dbh();
 
 INSTALLATION
   Operating System Perl
